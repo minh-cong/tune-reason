@@ -39,9 +39,12 @@ def load_training_data(file_path="processed_data.json", field='data'):
         dataset = load_dataset_safely(file_path, field)
 
         # Validate required fields
-        required_fields = ['query_vi', 'response_vi']
+        required_fields = ["query_vi", "response_vi"]
+        # `Dataset.features` is not always iterable in membership checks.
+        # Using `column_names` ensures we are checking against the actual
+        # column names present in the dataset to avoid false negatives.
         missing_fields = [field for field in required_fields
-                         if field not in dataset.features]
+                          if field not in dataset.column_names]
 
         if missing_fields:
             raise ValueError(f"Dataset is missing required fields: {missing_fields}")
